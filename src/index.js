@@ -1,50 +1,60 @@
-const player1 = {
-    Nome : "Mario",
-    Velocidade: 4,
-    Manobrabilidade: 3,
-    Poder: 3,
-    Pontos: 0,
+const readline = require('readline');
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+function perguntar(pergunta){
+    return new Promise(resolve => {
+        rl.question(pergunta, resposta => resolve(resposta));
+    });
 }
 
-const player2 = {
-    Nome : "Luigi",
-    Velocidade: 3,
-    Manobrabilidade: 4,
-    Poder: 4,
-    Pontos: 0, 
-}
-
-const player3 = {
-    Nome : "Peach",
-    Velocidade: 3,
-    Manobrabilidade: 4,
-    Poder: 2,
-    Pontos: 0, 
-}
-
-const player4 = {
-    Nome : "Yoshi",
-    Velocidade: 2,
-    Manobrabilidade: 4,
-    Poder: 3,
-    Pontos: 0, 
-}
-
-const player5 = {
-    Nome : "Bowser",
-    Velocidade: 5,
-    Manobrabilidade: 2,
-    Poder: 5,
-    Pontos: 0, 
-}
-
-const player6 = {
-    Nome : "Donkey Kong",
-    Velocidade: 2,
-    Manobrabilidade: 2,
-    Poder: 5,
-    Pontos: 0, 
-}
+const players = [
+    {
+        Nome : "Mario",
+        Velocidade: 4,
+        Manobrabilidade: 3,
+        Poder: 3,
+        Pontos: 0,
+    },
+    {
+        Nome : "Luigi",
+        Velocidade: 3,
+        Manobrabilidade: 4,
+        Poder: 4,
+        Pontos: 0, 
+    },
+    {
+        Nome : "Peach",
+        Velocidade: 3,
+        Manobrabilidade: 4,
+        Poder: 2,
+        Pontos: 0, 
+    },
+    {
+        Nome : "Yoshi",
+        Velocidade: 2,
+        Manobrabilidade: 4,
+        Poder: 3,
+        Pontos: 0, 
+    },
+    {
+        Nome : "Bowser",
+        Velocidade: 5,
+        Manobrabilidade: 2,
+        Poder: 5,
+        Pontos: 0, 
+    },
+    {
+        Nome : "Donkey Kong",
+        Velocidade: 2,
+        Manobrabilidade: 2,
+        Poder: 5,
+        Pontos: 0, 
+    }
+]
 
 async function rollDice(){
     return Math.floor(Math.random() * 6) + 1;
@@ -55,10 +65,10 @@ async function getRandomBlock(){
     let result 
 
     switch(true){
-        case random < 0.33:
+        case ramdom < 0.33:
             result = "RETA";
             break;
-        case random < 0.66:
+        case ramdom < 0.66:
             result = "CURVA";
             break;
         default:
@@ -99,8 +109,8 @@ async function playRaceEngine(character1, character2) {
             totalTestSkill1 = diceResult1 + character1.Manobrabilidade;
             totalTestSkill2 = diceResult2 + character2.Manobrabilidade;
 
-            await logRollResult(character1.Nome, "manobrabilidade", diceResult1, character1.Velocidade);
-            await logRollResult(character2.Nome, "manobrabilidade", diceResult2, character2.Velocidade);
+            await logRollResult(character1.Nome, "manobrabilidade", diceResult1, character1.Manobrabilidade);
+            await logRollResult(character2.Nome, "manobrabilidade", diceResult2, character2.Manobrabilidade);
         }
         if(block === "CONFRONTO"){
             let powerResult1 = diceResult1 + character1.Poder;
@@ -151,6 +161,23 @@ async function declareWinner(character1, character2) {
 }
 
 (async function main(){
+
+    console.log("🏁 Lista de personagens:");
+    players.forEach((player, index) => {
+        console.log(`${index + 1} - ${player.Nome}`);
+    });
+    
+    const escolha1 = await perguntar("\nEscolha o número do primeiro jogador: ");
+    const escolha2 = await perguntar("\nEscolha o número do segundo jogador: ");
+
+    const player1 = players[parseInt(escolha1) - 1];
+    const player2 = players[parseInt(escolha2) - 1];
+
+    if(!player1 || !player2 || player1 === player2){
+        console.log("❌ Escolha inválida. Tente novamente com dois jogadores diferentes.");
+        rl.close();
+        return;
+    }
     console.log(`🏁🚨 Corrida entre ${player1.Nome} e ${player2.Nome} começando... \n`);
 
     await playRaceEngine(player1, player2);
